@@ -17,7 +17,6 @@ const Skills = () => {
     frontend: {
       name: 'Frontend',
       color: 'from-green-400 to-green-600',
-      
       skills: [
         { 
           name: 'React', 
@@ -172,27 +171,26 @@ const Skills = () => {
                     : 'text-gray-400 hover:text-white hover:bg-accent/10'
                 }`}
               >
-                <span className="hidden sm:inline">{category.name}</span>
+                <span className="text-sm sm:text-base">{category.name}</span>
               </button>
             ))}
           </div>
         </div>
 
         {/* Skills Grid */}
-        <div className="relative min-h-[400px]">
+        <div className="relative min-h-[400px] z-10">
           {Object.entries(skillCategories).map(([key, category]) => (
             <div
               key={key}
               className={`absolute inset-0 transition-all duration-500 ${
                 activeTab === key 
-                  ? 'opacity-100 transform translate-y-0' 
-                  : 'opacity-0 transform translate-y-8 pointer-events-none'
+                  ? 'opacity-100 transform translate-y-0 z-20' 
+                  : 'opacity-0 transform translate-y-8 pointer-events-none z-10'
               }`}
             >
               <div className="bg-midnight/50 backdrop-blur-sm p-8 rounded-2xl border border-accent/10">
                 <div className="text-center mb-8">
                   <h3 className={`text-2xl font-bold bg-gradient-to-r ${category.color} bg-clip-text text-transparent inline-flex items-center gap-3`}>
-                    
                     {category.name}
                   </h3>
                 </div>
@@ -224,10 +222,10 @@ const Skills = () => {
         </div>
 
         {/* Currently Learning Section */}
-        <div className="mt-16 text-center">
+        <div className="mt-16 text-center relative z-30">
           <div className="inline-block bg-accent/10 backdrop-blur-sm p-8 rounded-2xl border border-accent/20 hover:border-accent/40 transition-all duration-300">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-2xl"></span>
+              <span className="text-2xl">📚</span>
               <h4 className="text-accent font-semibold text-lg">Currently Learning</h4>
             </div>
             <p className="text-gray-300 max-w-md">
