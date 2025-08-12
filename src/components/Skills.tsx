@@ -178,14 +178,14 @@ const Skills = () => {
         </div>
 
         {/* Skills Grid */}
-        <div className="relative mb-8">
+        <div className="relative mb-8 overflow-hidden">
           {Object.entries(skillCategories).map(([key, category]) => (
             <div
               key={key}
-              className={`transition-all duration-500 ${
+              className={`transition-all duration-700 ease-in-out transform ${
                 activeTab === key 
-                  ? 'opacity-100 block' 
-                  : 'opacity-0 hidden'
+                  ? 'opacity-100 translate-y-0 scale-100' 
+                  : 'opacity-0 translate-y-4 scale-95 absolute inset-0 pointer-events-none'
               }`}
             >
               <div className="bg-midnight/50 backdrop-blur-sm p-8 rounded-2xl border border-accent/10">
@@ -199,8 +199,11 @@ const Skills = () => {
                   {category.skills.map((skill, index) => (
                     <div
                       key={skill.name}
-                      className="group relative"
-                      style={{ animationDelay: `${index * 100}ms` }}
+                      className="group relative transform transition-all duration-300"
+                      style={{ 
+                        animationDelay: activeTab === key ? `${index * 80}ms` : '0ms',
+                        transitionDelay: activeTab === key ? `${index * 40}ms` : '0ms'
+                      }}
                     >
                       <div className="bg-midnight/70 backdrop-blur-sm border border-accent/20 rounded-xl p-6 text-center hover:border-accent/40 hover:bg-accent/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-accent/20">
                         <div className="mb-3 flex justify-center">
