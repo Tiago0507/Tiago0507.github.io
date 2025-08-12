@@ -178,14 +178,14 @@ const Skills = () => {
         </div>
 
         {/* Skills Grid */}
-        <div className="relative min-h-[400px] z-10">
+        <div className="relative mb-8">
           {Object.entries(skillCategories).map(([key, category]) => (
             <div
               key={key}
-              className={`absolute inset-0 transition-all duration-500 ${
+              className={`transition-all duration-500 ${
                 activeTab === key 
-                  ? 'opacity-100 transform translate-y-0 z-20' 
-                  : 'opacity-0 transform translate-y-8 pointer-events-none z-10'
+                  ? 'opacity-100 block' 
+                  : 'opacity-0 hidden'
               }`}
             >
               <div className="bg-midnight/50 backdrop-blur-sm p-8 rounded-2xl border border-accent/10">
@@ -222,10 +222,10 @@ const Skills = () => {
         </div>
 
         {/* Currently Learning Section */}
-        <div className="mt-16 text-center relative z-30">
+        <div className="mt-16 text-center">
           <div className="inline-block bg-accent/10 backdrop-blur-sm p-8 rounded-2xl border border-accent/20 hover:border-accent/40 transition-all duration-300">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-2xl">📚</span>
+              <span className="text-2xl"></span>
               <h4 className="text-accent font-semibold text-lg">Currently Learning</h4>
             </div>
             <p className="text-gray-300 max-w-md">
