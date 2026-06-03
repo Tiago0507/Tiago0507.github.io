@@ -43,7 +43,7 @@ const About: React.FC = () => {
         <div className="flex justify-center">
           {/* Technical Focus card */}
           <div className="reveal reveal-delay-4 relative w-full max-w-2xl">
-            <div className="absolute -inset-1 bg-gradient-to-r from-violet-600/20 to-cyan-500/20 rounded-3xl blur-xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-cyan-500/20 rounded-3xl blur-2xl" />
             <div className="relative bg-white dark:bg-[#0D0D28] border border-violet-200 dark:border-violet-700/40 rounded-2xl p-5 sm:p-7 shadow-xl shadow-violet-500/5">
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">
                 {about.technicalFocus.title}

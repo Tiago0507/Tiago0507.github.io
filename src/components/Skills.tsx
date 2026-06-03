@@ -147,7 +147,7 @@ const Skills: React.FC = () => {
 
         {/* Content panel */}
         <div className="reveal reveal-delay-3 relative">
-          <div className="absolute -inset-px bg-gradient-to-r from-violet-600/10 to-cyan-500/10 rounded-3xl blur-xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-600/10 to-cyan-500/10 rounded-3xl blur-2xl" />
           <div className="relative bg-white dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/20 rounded-2xl p-4 sm:p-8 shadow-sm">
             <h3 className={`text-lg font-bold bg-gradient-to-r ${activeGradient} bg-clip-text text-transparent mb-8`}>
               {activeName}

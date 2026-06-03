@@ -85,9 +85,9 @@ const Contact: React.FC = () => {
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Contact info */}
-          <div className="reveal reveal-delay-3 space-y-4">
+          <div className="reveal reveal-delay-3 space-y-4 min-w-0">
             <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-violet-600/15 to-cyan-500/15 rounded-3xl blur-xl" />
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-cyan-500/20 rounded-3xl blur-2xl" />
               <div className="relative bg-white dark:bg-[#0D0D28] border border-violet-200 dark:border-violet-700/40 rounded-2xl p-5 sm:p-7 shadow-sm">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6">
                   {ct.getInTouch}
@@ -138,7 +138,7 @@ const Contact: React.FC = () => {
           </div>
 
           {/* Form */}
-          <div className="reveal reveal-delay-4 bg-white dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/20 rounded-2xl p-5 sm:p-7 shadow-sm">
+          <div className="reveal reveal-delay-4 bg-white dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/20 rounded-2xl p-5 sm:p-7 shadow-sm min-w-0">
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6">
               {ct.form.send}
             </h3>
