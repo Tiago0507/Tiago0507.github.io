@@ -1,240 +1,199 @@
 import React, { useState } from 'react';
+import { ClipboardList, Globe, Database, Layers, Users, GitBranch, Server, Code2, Cpu, Workflow } from 'lucide-react';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { useLanguage } from '../context/LanguageContext';
 
-const Skills = () => {
-  const [activeTab, setActiveTab] = useState('frontend');
+const TechIcon = ({ iconUrl, alt }: { iconUrl: string; alt: string }) => (
+  <img
+    src={iconUrl}
+    alt={alt}
+    className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-300"
+    loading="lazy"
+  />
+);
 
-  // Icon component for rendering SVG icons
-  const TechIcon = ({ iconUrl, alt }: { iconUrl: string; alt: string }) => (
-    <img 
-      src={iconUrl} 
-      alt={alt}
-      className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300"
-      loading="lazy"
-    />
-  );
+const techCategories = {
+  backend: {
+    gradient: 'from-violet-600 to-purple-600',
+    skills: [
+      { name: 'Spring Boot', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg' },
+      { name: 'NestJS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nestjs/nestjs-original.svg' },
+      { name: 'Next.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg' },
+      { name: 'Java', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg' },
+      { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg' },
+      { name: 'MySQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg' },
+      { name: 'PostgreSQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg' },
+      { name: 'MongoDB', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg' },
+    ],
+  },
+  frontend: {
+    gradient: 'from-cyan-500 to-blue-500',
+    skills: [
+      { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg' },
+      { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg' },
+      { name: 'JavaScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg' },
+      { name: 'Tailwind CSS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg' },
+      { name: 'Bootstrap', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bootstrap/bootstrap-original.svg' },
+    ],
+  },
+  devops: {
+    gradient: 'from-emerald-500 to-teal-600',
+    skills: [
+      { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg' },
+      { name: 'AWS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg' },
+      { name: 'Azure', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg' },
+      { name: 'Terraform', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg' },
+      { name: 'Jenkins', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jenkins/jenkins-original.svg' },
+      { name: 'GitHub Actions', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg' },
+      { name: 'Ansible', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ansible/ansible-original.svg' },
+      { name: 'Git', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg' },
+      { name: 'GitHub', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg' },
+    ],
+  },
+};
 
-  const skillCategories = {
-    frontend: {
-      name: 'Frontend',
-      color: 'from-green-400 to-green-600',
-      skills: [
-        { 
-          name: 'React', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg',
-          color: 'text-cyan-400' 
-        },
-        { 
-          name: 'JavaScript', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg',
-          color: 'text-yellow-400' 
-        },
-        { 
-          name: 'TypeScript', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg',
-          color: 'text-blue-400' 
-        },
-        { 
-          name: 'Tailwind CSS', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg',
-          color: 'text-teal-400' 
-        },
-        { 
-          name: 'Bootstrap', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bootstrap/bootstrap-original.svg',
-          color: 'text-purple-400' 
-        },
-      ]
-    },
-    backend: {
-      name: 'Backend',
-      color: 'from-blue-400 to-blue-600',
-      skills: [
-        { 
-          name: 'Spring Boot', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg',
-          color: 'text-green-400' 
-        },
-        { 
-          name: 'NestJS', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nestjs/nestjs-original.svg',
-          color: 'text-red-400' 
-        },
-        { 
-          name: 'Next.js', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg',
-          color: 'text-gray-100' 
-        },
-        { 
-          name: 'Java', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg',
-          color: 'text-orange-400' 
-        },
-        { 
-          name: 'Kotlin', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg',
-          color: 'text-purple-400' 
-        },
-        { 
-          name: 'Python', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg',
-          color: 'text-yellow-400' 
-        },
-        { 
-          name: 'MySQL', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg',
-          color: 'text-blue-400' 
-        },
-        { 
-          name: 'PostgreSQL', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg',
-          color: 'text-blue-500' 
-        },
-        { 
-          name: 'MongoDB', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg',
-          color: 'text-green-500' 
-        },
-      ]
-    },
-    devops: {
-      name: 'Cloud & DevOps',
-      color: 'from-orange-400 to-pink-600',
-      skills: [
-        { 
-          name: 'AWS', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg',
-          color: 'text-orange-400' 
-        },
-        { 
-          name: 'Azure', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg',
-          color: 'text-blue-400' 
-        },
-        { 
-          name: 'Docker', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg',
-          color: 'text-blue-400' 
-        },
-        { 
-          name: 'Terraform', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg',
-          color: 'text-purple-400' 
-        },
-        { 
-          name: 'Jenkins', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jenkins/jenkins-original.svg',
-          color: 'text-blue-600' 
-        },
-        { 
-          name: 'Ansible', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ansible/ansible-original.svg',
-          color: 'text-red-500' 
-        },
-        { 
-          name: 'Git', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg',
-          color: 'text-gray-100' 
-        },
-        { 
-          name: 'GitHub', 
-          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg',
-          color: 'text-gray-100' 
-        },
-      ]
-    }
-  };
+const softSkillIcons = [
+  { icon: <ClipboardList size={22} />, gradient: 'from-violet-500 to-purple-500' },
+  { icon: <Globe size={22} />, gradient: 'from-blue-500 to-cyan-500' },
+  { icon: <Database size={22} />, gradient: 'from-emerald-500 to-teal-500' },
+  { icon: <Layers size={22} />, gradient: 'from-orange-500 to-amber-500' },
+  { icon: <Cpu size={22} />, gradient: 'from-pink-500 to-rose-500' },
+  { icon: <Users size={22} />, gradient: 'from-indigo-500 to-violet-500' },
+  { icon: <Server size={22} />, gradient: 'from-cyan-500 to-blue-600' },
+  { icon: <Workflow size={22} />, gradient: 'from-teal-500 to-emerald-600' },
+  { icon: <Code2 size={22} />, gradient: 'from-violet-600 to-cyan-500' },
+  { icon: <GitBranch size={22} />, gradient: 'from-slate-600 to-slate-800' },
+];
+
+type TechTabKey = keyof typeof techCategories;
+type TabKey = TechTabKey | 'skills';
+
+const Skills: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<TabKey>('backend');
+  const sectionRef = useScrollAnimation();
+  const { t } = useLanguage();
+  const { skills } = t;
+
+  const tabs: { key: TabKey; label: string; gradient: string }[] = [
+    { key: 'backend', label: skills.tabs.backend.name, gradient: techCategories.backend.gradient },
+    { key: 'frontend', label: skills.tabs.frontend.name, gradient: techCategories.frontend.gradient },
+    { key: 'devops', label: skills.tabs.devops.name, gradient: techCategories.devops.gradient },
+    { key: 'skills', label: skills.tabs.skills.name, gradient: 'from-pink-500 to-violet-600' },
+  ];
+
+  const tabLabels: { key: TabKey; shortLabel: string }[] = [
+    { key: 'backend', shortLabel: skills.tabs.backend.label },
+    { key: 'frontend', shortLabel: skills.tabs.frontend.label },
+    { key: 'devops', shortLabel: skills.tabs.devops.label },
+    { key: 'skills', shortLabel: skills.tabs.skills.label },
+  ];
+
+  const activeGradient = tabs.find(t => t.key === activeTab)?.gradient ?? 'from-violet-600 to-cyan-500';
+  const activeName = tabs.find(t => t.key === activeTab)?.label ?? '';
+
+  const softSkills = softSkillIcons.map((meta, i) => ({
+    ...meta,
+    name: skills.softSkills[i],
+  }));
 
   return (
-    <section id="skills" className="py-20 px-6 bg-midnight-blue/30">
-      <div className="container mx-auto max-w-6xl">
+    <section id="skills" className="py-16 md:py-24 px-6 bg-slate-50 dark:bg-[#04040F]">
+      <div ref={sectionRef} className="container mx-auto max-w-6xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent">
-            Technical Skills
+          <div className="reveal">
+            <span className="inline-block px-4 py-1.5 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-xs font-semibold uppercase tracking-widest rounded-full mb-4">
+              {skills.badge}
+            </span>
+          </div>
+          <h2 className="reveal reveal-delay-1 text-4xl md:text-5xl font-black text-slate-900 dark:text-slate-100 mb-4">
+            {skills.title.split(' ').slice(0, -2).join(' ')}{' '}
+            <span className="bg-gradient-to-r from-violet-600 to-cyan-500 dark:from-violet-400 dark:to-cyan-400 bg-clip-text text-transparent">
+              {skills.title.split(' ').slice(-2).join(' ')}
+            </span>
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-accent to-accent-light mx-auto rounded-full"></div>
-          <p className="text-gray-400 mt-6 max-w-2xl mx-auto">
-            Technologies and tools I work with across different domains
+          <div className="reveal reveal-delay-2 w-16 h-1 bg-gradient-to-r from-violet-600 to-cyan-500 mx-auto rounded-full mb-4" />
+          <p className="reveal reveal-delay-2 text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+            {skills.subtitle}
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="flex justify-center mb-12">
-          <div className="bg-midnight/50 backdrop-blur-sm p-2 rounded-2xl border border-accent/10 inline-flex">
-            {Object.entries(skillCategories).map(([key, category]) => (
-              <button
+        {/* Tab selector */}
+        <div className="reveal reveal-delay-3 flex justify-center mb-10">
+          <div className="inline-flex flex-wrap justify-center gap-2 p-1.5 bg-white dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/30 rounded-2xl shadow-sm">
+            {tabs.map(({ key, label, gradient }, i) => (
+              <button type="button"
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                className={`relative px-3 sm:px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
                   activeTab === key
-                    ? `bg-gradient-to-r ${category.color} text-white shadow-lg transform scale-105`
-                    : 'text-gray-400 hover:text-white hover:bg-accent/10'
+                    ? 'text-white shadow-md'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                 }`}
               >
-                <span className="text-sm sm:text-base">{category.name}</span>
+                {activeTab === key && (
+                  <span className={`absolute inset-0 rounded-xl bg-gradient-to-r ${gradient} -z-0`} />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <span className="hidden sm:inline text-xs font-bold opacity-60">
+                    {tabLabels[i].shortLabel}
+                  </span>
+                  {label}
+                </span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Skills Grid */}
-        <div className="relative mb-8 overflow-hidden">
-          {Object.entries(skillCategories).map(([key, category]) => (
-            <div
-              key={key}
-              className={`transition-all duration-700 ease-in-out transform ${
-                activeTab === key 
-                  ? 'opacity-100 translate-y-0 scale-100' 
-                  : 'opacity-0 translate-y-4 scale-95 absolute inset-0 pointer-events-none'
-              }`}
-            >
-              <div className="bg-midnight/50 backdrop-blur-sm p-8 rounded-2xl border border-accent/10">
-                <div className="text-center mb-8">
-                  <h3 className={`text-2xl font-bold bg-gradient-to-r ${category.color} bg-clip-text text-transparent inline-flex items-center gap-3`}>
-                    {category.name}
-                  </h3>
-                </div>
+        {/* Content panel */}
+        <div className="reveal reveal-delay-3 relative">
+          <div className="absolute -inset-px bg-gradient-to-r from-violet-600/10 to-cyan-500/10 rounded-3xl blur-xl" />
+          <div className="relative bg-white dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/20 rounded-2xl p-4 sm:p-8 shadow-sm">
+            <h3 className={`text-lg font-bold bg-gradient-to-r ${activeGradient} bg-clip-text text-transparent mb-8`}>
+              {activeName}
+            </h3>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                  {category.skills.map((skill, index) => (
-                    <div
-                      key={skill.name}
-                      className="group relative transform transition-all duration-300"
-                      style={{ 
-                        animationDelay: activeTab === key ? `${index * 80}ms` : '0ms',
-                        transitionDelay: activeTab === key ? `${index * 40}ms` : '0ms'
-                      }}
-                    >
-                      <div className="bg-midnight/70 backdrop-blur-sm border border-accent/20 rounded-xl p-6 text-center hover:border-accent/40 hover:bg-accent/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-accent/20">
-                        <div className="mb-3 flex justify-center">
-                          <TechIcon iconUrl={skill.icon} alt={skill.name} />
-                        </div>
-                        <h4 className="text-gray-200 font-medium text-sm group-hover:text-white transition-colors duration-300">
-                          {skill.name}
-                        </h4>
+            {activeTab !== 'skills' ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+                {techCategories[activeTab as TechTabKey].skills.map((skill, index) => (
+                  <div
+                    key={skill.name}
+                    className="group relative"
+                    style={{ transitionDelay: `${index * 50}ms` }}
+                  >
+                    <div className="bg-slate-50 dark:bg-[#080818] border border-slate-200 dark:border-violet-900/20 rounded-xl p-4 text-center hover:border-violet-400 dark:hover:border-violet-500/60 hover:shadow-lg hover:shadow-violet-500/10 card-hover cursor-default">
+                      <div className="flex justify-center mb-2.5">
+                        <TechIcon iconUrl={skill.icon} alt={skill.name} />
                       </div>
-                      
-                      {/* Hover effect - glow */}
-                      <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-0 group-hover:opacity-20 rounded-xl transition-opacity duration-300 -z-10 blur-xl`}></div>
+                      <span className="text-sm font-medium text-slate-600 dark:text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-300 leading-tight block">
+                        {skill.name}
+                      </span>
                     </div>
-                  ))}
-                </div>
+                    <div className={`absolute inset-0 bg-gradient-to-r ${techCategories[activeTab as TechTabKey].gradient} opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-300 -z-10 blur-lg`} />
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Currently Learning Section */}
-        <div className="mt-16 text-center">
-          <div className="inline-block bg-accent/10 backdrop-blur-sm p-8 rounded-2xl border border-accent/20 hover:border-accent/40 transition-all duration-300">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-2xl"></span>
-              <h4 className="text-accent font-semibold text-lg">Currently Learning</h4>
-            </div>
-            <p className="text-gray-300 max-w-md">
-              Advanced Cloud Architecture, Kubernetes, Infrastructure as Code, 
-              and preparing for AWS/Azure certifications
-            </p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+                {softSkills.map((skill, index) => (
+                  <div
+                    key={skill.name}
+                    className="group relative"
+                    style={{ transitionDelay: `${index * 40}ms` }}
+                  >
+                    <div className="bg-slate-50 dark:bg-[#080818] border border-slate-200 dark:border-violet-900/20 rounded-xl p-4 text-center hover:border-violet-400 dark:hover:border-violet-500/60 hover:shadow-lg hover:shadow-violet-500/10 card-hover cursor-default">
+                      <div className={`w-10 h-10 mx-auto mb-2.5 rounded-xl bg-gradient-to-br ${skill.gradient} flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                        {skill.icon}
+                      </div>
+                      <span className="text-sm font-medium text-slate-600 dark:text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-300 leading-tight block">
+                        {skill.name}
+                      </span>
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-pink-500/0 to-violet-600/0 group-hover:from-pink-500/10 group-hover:to-violet-600/10 rounded-xl transition-all duration-300 -z-10 blur-lg" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

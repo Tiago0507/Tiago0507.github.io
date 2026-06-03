@@ -1,217 +1,302 @@
-import React from 'react';
-import { ExternalLink, Github } from 'lucide-react';
+import React, { useState } from 'react';
+import { ExternalLink, Github, ArrowUpRight, Clock, ChevronDown } from 'lucide-react';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { useLanguage } from '../context/LanguageContext';
+import { useTilt } from '../hooks/useTilt';
+import type { Translations } from '../translations';
+
+interface Repo {
+  label: string;
+  url: string;
+}
 
 interface Project {
   id: string;
   title: string;
+  shortTitle: string;
   description: string;
   technologies: string[];
   githubUrl?: string;
+  repos?: Repo[];
   liveUrl?: string;
   imageUrl?: string;
+  status: 'completed' | 'in-progress';
+  category: string;
 }
 
-const Projects: React.FC = () => {
-  const projects: Project[] = [
-    {
-      id: '1',
-      title: 'Medical Management Backend Project (Backend) - Oncologic',
-      description: 'Web-based platform designed to optimize the administrative and operational management of Oncologic Clinic in Cali - Backend.',
-      technologies: ['Spring Boot', 'JWT', 'Docker', 'Java', 'PostgreSQL'],
-      githubUrl: 'https://github.com/Tiago0507/proyecto-final-siscom',
-      imageUrl: '/images/OncologicBackend.png',
-    },
-    {
-      id: '2',
-      title: 'Medical Management Frontend Project (Frontend) - Oncologic',
-      description: 'Web-based platform designed to optimize the administrative and operational management of Oncologic Clinic in Cali - Frontend.',
-      technologies: ['TypeScript', 'React', 'Redux', 'Axios'],
-      githubUrl: 'https://github.com/Tiago0507/proyecto-front-siscom',
-      imageUrl: '/images/OncologicFrontend.png',
-    },
-    {
-      id: '3',
-      title: 'Mobile Application for Object Rental - Usolo',
-      description: 'Demo mobile application that allows you to rent objects for a certain amount of time and money.',
-      technologies: ['Kotlin', 'Docker', 'PostgreSQL', 'Directus'],
-      githubUrl: 'https://github.com/Tiago0507/usolo-project-appsmoviles',
-      imageUrl: '/images/UsoloApp.png',
-    },
-    {
-      id: '4',
-      title: 'Vasture - Ecommerce (In Progress)',
-      description: 'Backend of an e-commerce project selling all kinds of products.',
-      technologies: ['NestJS', 'TypeScript', 'PostgreSQL', 'Docker'],
-      githubUrl: 'https://github.com/Tiago0507/vasture-project-backend',
-    },
-  ];
+const projects: Project[] = [
+  {
+    id: '1',
+    title: 'Medical Management Platform — Oncologic',
+    shortTitle: 'Oncologic Platform',
+    description: 'Full-stack platform to optimize administrative and operational management for Oncologic Clinic in Cali. REST API with JWT auth and role-based access on the backend; React SPA with role-specific dashboards for admins, doctors, and patients on the frontend.',
+    technologies: ['Spring Boot', 'Java', 'React', 'TypeScript', 'Redux', 'PostgreSQL', 'Docker', 'JWT'],
+    repos: [
+      { label: 'Backend', url: 'https://github.com/Tiago0507/proyecto-final-siscom' },
+      { label: 'Frontend', url: 'https://github.com/Tiago0507/proyecto-front-siscom' },
+    ],
+    imageUrl: '/images/OncologicFrontend.png',
+    status: 'completed',
+    category: 'Full Stack',
+  },
+  {
+    id: '2',
+    title: 'Usolo — Mobile Object Rental App',
+    shortTitle: 'Usolo App',
+    description: 'Mobile application that enables peer-to-peer object rental with time and price flexibility. Includes Directus CMS for content management and Docker-based deployment pipeline.',
+    technologies: ['Kotlin', 'PostgreSQL', 'Docker', 'Directus'],
+    githubUrl: 'https://github.com/Tiago0507/usolo-project-appsmoviles',
+    imageUrl: '/images/UsoloApp.png',
+    status: 'completed',
+    category: 'Mobile',
+  },
+  {
+    id: '3',
+    title: 'TicketHub — AWS Cloud Infrastructure',
+    shortTitle: 'TicketHub',
+    description: 'Production-ready AWS infrastructure for an event ticketing platform, built entirely with CloudFormation. Multi-AZ VPC with ALB and Auto Scaling Groups, RDS PostgreSQL with automated backups, and EC2-hosted Next.js/NestJS services under PM2. Includes CloudWatch alarms and dashboards, SNS alert routing, and CloudTrail audit logging.',
+    technologies: ['AWS CloudFormation', 'EC2', 'RDS PostgreSQL', 'Auto Scaling', 'CloudWatch', 'SNS', 'NestJS', 'Next.js'],
+    githubUrl: 'https://github.com/Juanmadiaz45/aws-scalable-ecommerce',
+    imageUrl: '/images/ImagenRepo1.jpeg',
+    status: 'completed',
+    category: 'Cloud',
+  },
+  {
+    id: '4',
+    title: 'Polyglot Microservices — Azure DevOps Pipeline',
+    shortTitle: 'Microservices Pipeline',
+    description: 'Fully automated DevOps pipeline for deploying polyglot microservices on Azure. Five services in Go, Java, Node.js, Python, and Vue.js with zero-touch deployment via GitHub Actions. Infrastructure as Code with Terraform and Ansible, Cache-Aside with Redis, Circuit Breaker for resilience, and distributed tracing with Zipkin.',
+    technologies: ['Azure', 'Terraform', 'Ansible', 'Docker', 'GitHub Actions', 'Redis', 'PostgreSQL', 'Go', 'Vue.js'],
+    githubUrl: 'https://github.com/Tiago0507/microservice-app-example',
+    imageUrl: '/images/ImagenRepo2.jpeg',
+    status: 'completed',
+    category: 'DevOps',
+  },
+];
+
+const categoryColors: Record<string, string> = {
+  'Full Stack': 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300',
+  Backend: 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300',
+  Frontend: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300',
+  Mobile: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300',
+  Cloud: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',
+  DevOps: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
+};
+
+const ProjectCard: React.FC<{ project: Project; index: number; expandedId: string | null; onToggle: (id: string) => void; pt: Translations['projects'] }> = ({
+  project, index, expandedId, onToggle, pt,
+}) => {
+  const { ref, tiltStyle, onMouseMove, onMouseLeave } = useTilt(6);
 
   return (
-    <section id="projects" className="py-20 px-6">
-      <div className="container mx-auto max-w-7xl">
+    <div
+      ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={tiltStyle}
+      className={`reveal reveal-delay-${Math.min(index + 2, 5)} group bg-slate-50 dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/20 rounded-2xl overflow-hidden hover:border-violet-300 dark:hover:border-violet-500/50 transition-colors duration-300`}
+    >
+      {/* Image or placeholder */}
+      <div className="relative h-44 overflow-hidden bg-gradient-to-br from-violet-50 to-cyan-50 dark:from-violet-950/30 dark:to-cyan-950/30">
+        {project.imageUrl ? (
+          <>
+            <img
+              src={project.imageUrl}
+              alt={project.shortTitle}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-2 rounded-2xl bg-gradient-to-br from-violet-600/20 to-cyan-500/20 border border-violet-300/30 dark:border-violet-700/30 flex items-center justify-center">
+                <span className="text-2xl">💻</span>
+              </div>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-500">{pt.inDevelopment}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Top badges */}
+        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+          <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${categoryColors[project.category] ?? 'bg-slate-100 text-slate-600'}`}>
+            {project.category}
+          </span>
+          {project.status === 'in-progress' && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 text-xs font-semibold rounded-full border border-amber-200 dark:border-amber-700/40">
+              <Clock size={10} />
+              {pt.inProgress}
+            </span>
+          )}
+        </div>
+
+        {/* Hover action buttons */}
+        <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+          {project.repos
+            ? project.repos.map(repo => (
+                <a
+                  key={repo.label}
+                  href={repo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-900/80 dark:bg-[#0D0D28]/90 backdrop-blur-sm rounded-lg text-white hover:bg-violet-600 transition-colors duration-200 text-xs font-medium"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <Github size={13} />
+                  {repo.label}
+                </a>
+              ))
+            : project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-slate-900/80 dark:bg-[#0D0D28]/90 backdrop-blur-sm rounded-lg text-white hover:bg-violet-600 transition-colors duration-200"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <Github size={15} />
+                </a>
+              )}
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-slate-900/80 dark:bg-[#0D0D28]/90 backdrop-blur-sm rounded-lg text-white hover:bg-cyan-500 transition-colors duration-200"
+              onClick={e => e.stopPropagation()}
+            >
+              <ExternalLink size={15} />
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-4 sm:p-6">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <h3 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-300 leading-snug">
+            {pt.items[project.id]?.title ?? project.title}
+          </h3>
+          {project.repos ? (
+            <div className="flex gap-1 flex-shrink-0">
+              {project.repos.map(repo => (
+                <a
+                  key={repo.label}
+                  href={repo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-2 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg border border-slate-200 dark:border-violet-900/30 transition-all duration-200"
+                >
+                  {repo.label}
+                  <ArrowUpRight size={11} />
+                </a>
+              ))}
+            </div>
+          ) : project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 p-1.5 text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-all duration-200"
+            >
+              <ArrowUpRight size={16} />
+            </a>
+          )}
+        </div>
+
+        <p className={`text-base text-slate-500 dark:text-slate-400 leading-relaxed transition-all duration-300 ${expandedId === project.id ? 'mb-3' : 'mb-2 line-clamp-3'}`}>
+          {pt.items[project.id]?.description ?? project.description}
+        </p>
+        <button type="button"
+          onClick={() => onToggle(project.id)}
+          className="flex items-center gap-1 text-xs font-semibold text-violet-500 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 mb-4 transition-colors duration-200"
+        >
+          {expandedId === project.id ? pt.seeLess : pt.seeMore}
+          <ChevronDown
+            size={13}
+            className={`transition-transform duration-300 ${expandedId === project.id ? 'rotate-180' : ''}`}
+          />
+        </button>
+
+        {/* Tech badges */}
+        <div className="flex flex-wrap gap-2">
+          {project.technologies.map(tech => (
+            <span
+              key={tech}
+              className="px-2.5 py-1 bg-white dark:bg-[#080818] border border-slate-200 dark:border-violet-900/30 text-slate-600 dark:text-slate-400 text-sm font-medium rounded-lg hover:border-violet-300 dark:hover:border-violet-600/50 hover:text-violet-600 dark:hover:text-violet-400 transition-all duration-200"
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Projects: React.FC = () => {
+  const sectionRef = useScrollAnimation();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { t } = useLanguage();
+  const { projects: pt } = t;
+
+  const handleToggle = (id: string) => setExpandedId(expandedId === id ? null : id);
+
+  return (
+    <section id="projects" className="py-16 md:py-24 px-6 bg-white dark:bg-[#080818]">
+      <div ref={sectionRef} className="container mx-auto max-w-6xl">
+        {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent">
-            Featured Projects
+          <div className="reveal">
+            <span className="inline-block px-4 py-1.5 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-xs font-semibold uppercase tracking-widest rounded-full mb-4">
+              {pt.badge}
+            </span>
+          </div>
+          <h2 className="reveal reveal-delay-1 text-4xl md:text-5xl font-black text-slate-900 dark:text-slate-100 mb-4">
+            {pt.title.split(' ').slice(0, -1).join(' ')}{' '}
+            <span className="bg-gradient-to-r from-violet-600 to-cyan-500 dark:from-violet-400 dark:to-cyan-400 bg-clip-text text-transparent">
+              {pt.title.split(' ').slice(-1)[0]}
+            </span>
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-accent to-accent-light mx-auto rounded-full"></div>
-          <p className="text-gray-400 mt-6 max-w-2xl mx-auto">
-            A showcase of my technical projects demonstrating expertise in backend development, DevOps, and cloud technologies
+          <div className="reveal reveal-delay-2 w-16 h-1 bg-gradient-to-r from-violet-600 to-cyan-500 mx-auto rounded-full mb-4" />
+          <p className="reveal reveal-delay-2 text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+            {pt.subtitle}
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        {/* Projects grid */}
+        <div className="grid lg:grid-cols-2 gap-6">
           {projects.map((project, index) => (
-            <div
+            <ProjectCard
               key={project.id}
-              className="group bg-midnight/50 backdrop-blur-sm rounded-2xl border border-accent/10 overflow-hidden hover:border-accent/30 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-accent/10"
-              style={{ animationDelay: `${index * 150}ms` }}
-            >
-              {/* Image Section */}
-              {project.imageUrl ? (
-                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-accent/5 to-accent-light/10 flex items-center justify-center">
-                  <img
-                    src={project.imageUrl}
-                    alt={`${project.title} screenshot`}
-                    className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-midnight/80 via-transparent to-transparent opacity-60"></div>
-                  
-                  {/* Action buttons overlay */}
-                  <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                    {project.githubUrl && (
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-3 bg-midnight/80 backdrop-blur-sm hover:bg-accent/90 rounded-full transition-all duration-300 hover:scale-110"
-                      >
-                        <Github size={18} className="text-white" />
-                      </a>
-                    )}
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-3 bg-midnight/80 backdrop-blur-sm hover:bg-accent/90 rounded-full transition-all duration-300 hover:scale-110"
-                      >
-                        <ExternalLink size={18} className="text-white" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                // Fallback for projects without images
-                <div className="relative h-48 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-6xl text-accent/30 mb-2">💻</div>
-                    <p className="text-accent/60 text-sm font-medium">In Development</p>
-                  </div>
-                  
-                  {/* Action buttons for no-image projects */}
-                  <div className="absolute top-4 right-4 flex space-x-2">
-                    {project.githubUrl && (
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-3 bg-midnight/60 backdrop-blur-sm hover:bg-accent/90 rounded-full transition-all duration-300 hover:scale-110"
-                      >
-                        <Github size={18} className="text-white" />
-                      </a>
-                    )}
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-3 bg-midnight/60 backdrop-blur-sm hover:bg-accent/90 rounded-full transition-all duration-300 hover:scale-110"
-                      >
-                        <ExternalLink size={18} className="text-white" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Content Section */}
-              <div className="p-8">
-                <h3 className="text-xl font-bold text-white group-hover:text-accent transition-colors duration-300 mb-3 leading-tight">
-                  {project.title}
-                </h3>
-
-                <p className="text-gray-400 mb-6 text-sm leading-relaxed">
-                  {project.description}
-                </p>
-
-                {/* Technologies */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.technologies.map((tech, techIndex) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1.5 bg-accent/10 text-accent text-xs font-medium rounded-full border border-accent/20 hover:bg-accent/20 hover:border-accent/40 transition-all duration-300"
-                      style={{ animationDelay: `${(index * 150) + (techIndex * 50)}ms` }}
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Bottom action area for projects with images */}
-                {project.imageUrl && (
-                  <div className="flex justify-between items-center pt-4 border-t border-accent/10">
-                    <div className="flex space-x-3">
-                      {project.githubUrl && (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-gray-400 hover:text-accent transition-colors duration-300 text-sm font-medium flex items-center gap-2"
-                        >
-                          <Github size={16} />
-                          Code
-                        </a>
-                      )}
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-gray-400 hover:text-accent transition-colors duration-300 text-sm font-medium flex items-center gap-2"
-                        >
-                          <ExternalLink size={16} />
-                          Live Demo
-                        </a>
-                      )}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {new Date().getFullYear()}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Hover glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent-light/0 group-hover:from-accent/5 group-hover:via-accent/0 group-hover:to-accent-light/5 transition-all duration-500 pointer-events-none rounded-2xl" />
-            </div>
+              project={project}
+              index={index}
+              expandedId={expandedId}
+              onToggle={handleToggle}
+              pt={pt}
+            />
           ))}
         </div>
 
-        {/* Call to action */}
-        <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-accent/10 to-accent-light/10 backdrop-blur-sm p-8 rounded-2xl border border-accent/20 max-w-2xl mx-auto">
-            <h3 className="text-xl font-bold text-white mb-4">Want to see more?</h3>
-            <p className="text-gray-400 mb-6">
-              Check out my GitHub for additional projects and contributions to open source
+        {/* CTA */}
+        <div className="reveal reveal-delay-4 mt-12 text-center">
+          <div className="inline-block bg-slate-50 dark:bg-[#0D0D28] border border-violet-200 dark:border-violet-700/40 rounded-2xl p-8 max-w-lg w-full shadow-sm">
+            <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-2">{pt.cta.title}</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+              {pt.cta.subtitle}
             </p>
             <a
               href="https://github.com/Tiago0507"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-accent to-accent-light hover:from-accent-light hover:to-accent text-white font-semibold rounded-xl transition-all duration-300 group shadow-lg hover:shadow-accent/20 hover:scale-105"
+              className="group inline-flex items-center gap-2.5 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold rounded-xl hover:bg-violet-600 dark:hover:bg-violet-400 dark:hover:text-white hover:shadow-lg hover:shadow-violet-500/25 transition-all duration-300 hover:scale-105"
             >
-              <Github className="mr-3 group-hover:rotate-12 transition-transform duration-300" size={20} />
-              View All Projects on GitHub
+              <Github size={18} className="group-hover:rotate-12 transition-transform duration-300" />
+              {pt.cta.button}
+              <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
             </a>
           </div>
         </div>

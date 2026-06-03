@@ -2,7 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --scrollbar-track: #F1F5F9;
+  --scrollbar-thumb: #7C3AED;
+  --scrollbar-thumb-hover: #6D28D9;
+}
+
+.dark {
+  --scrollbar-track: #080818;
+  --scrollbar-thumb: #5B21B6;
+  --scrollbar-thumb-hover: #7C3AED;
+}
 
 * {
   margin: 0;
@@ -12,56 +24,143 @@
 
 html {
   scroll-behavior: smooth;
+  /* Prevent horizontal overflow on all devices */
+  overflow-x: hidden;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  /* Remove blue tap flash on mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0F172A;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3B82F6;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #60A5FA;
+  background: var(--scrollbar-thumb-hover);
 }
 
-/* Smooth transitions */
-* {
-  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
-/* Custom animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in-up {
-  animation: fadeInUp 0.8s ease-out;
-}
-
-/* Selection color */
+/* Selection */
 ::selection {
-  background-color: #3B82F6;
+  background-color: #7C3AED;
   color: white;
+}
+
+/* Grid dot pattern */
+.bg-grid-dots {
+  background-image: radial-gradient(rgba(124, 58, 237, 0.15) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.dark .bg-grid-dots {
+  background-image: radial-gradient(rgba(124, 58, 237, 0.12) 1px, transparent 1px);
+}
+
+/* Gradient text animation */
+.gradient-text-animated {
+  background: linear-gradient(135deg, #7C3AED, #06B6D4, #7C3AED);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Scroll reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* Glow effects */
+.glow-violet {
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+}
+
+.glow-violet-sm {
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);
+}
+
+/* Card hover lift */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+}
+
+/* Mono font */
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Respect user's motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Smooth theme transitions */
+*, *::before, *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Exclude transitions on elements that shouldn't animate */
+button, a {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+              transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+/* Light mode animated mesh gradient for Hero */
+@keyframes mesh-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero-mesh-bg {
+  background: linear-gradient(-45deg, #f5f3ff, #ede9fe, #e0f2fe, #faf5ff, #f0fdf4, #f5f3ff);
+  background-size: 400% 400%;
+  animation: mesh-shift 10s ease infinite;
+  opacity: 0.65;
+}
+
+/* Glassmorphism utility */
+.dark .glass-card {
+  background: rgba(13, 13, 40, 0.72);
+  border-color: rgba(139, 92, 246, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }

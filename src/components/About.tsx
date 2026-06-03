@@ -1,91 +1,72 @@
-import React from 'react';
-import { GraduationCap, Target, Languages } from 'lucide-react';
+import React from "react";
+import { Code2, Cloud, GitBranch } from "lucide-react";
+import { useScrollAnimation } from "../hooks/useScrollAnimation";
+import { useLanguage } from "../context/LanguageContext";
+
+const focusIcons = [
+  { icon: <Code2 size={18} />, gradient: "from-violet-600 to-purple-600" },
+  { icon: <Cloud size={18} />, gradient: "from-cyan-500 to-blue-500" },
+  { icon: <GitBranch size={18} />, gradient: "from-emerald-500 to-teal-500" },
+];
 
 const About: React.FC = () => {
+  const sectionRef = useScrollAnimation();
+  const { t } = useLanguage();
+  const { about } = t;
+
   return (
-    <section id="about" className="py-20 px-6">
-      <div className="container mx-auto max-w-6xl">
+    <section id="about" className="py-16 md:py-24 px-6 bg-white dark:bg-[#080818]">
+      <div ref={sectionRef} className="container mx-auto max-w-6xl">
+        {/* Section header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent">
-            About Me
-          </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-accent to-accent-light mx-auto rounded-full"></div>
+          <div className="reveal">
+            <span className="inline-block px-4 py-1.5 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-semibold uppercase tracking-widest rounded-full mb-4">
+              {about.badge}
+            </span>
+          </div>
+          <div className="reveal reveal-delay-2 w-16 h-1 bg-gradient-to-r from-violet-600 to-cyan-500 mx-auto rounded-full" />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="bg-midnight-blue/50 backdrop-blur-sm p-6 rounded-xl border border-accent/10">
-              <div className="flex items-center mb-4">
-                <GraduationCap className="text-accent mr-3" size={24} />
-                <h3 className="text-xl font-semibold">Education</h3>
-              </div>
-              <p className="text-gray-300">
-                8th semester Systems & Telematics Engineering student at Universidad ICESI, Cali. 
-                Specializing in backend development and transitioning into DevOps and Cloud Engineering.
-              </p>
-            </div>
+        {/* Bio narrative */}
+        <div className="reveal reveal-delay-2 max-w-3xl mx-auto mb-16 space-y-5">
+          {about.bio.map((paragraph, i) => (
+            <p
+              key={i}
+              className="text-base md:text-lg text-slate-600 dark:text-slate-400 leading-relaxed"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
 
-            <div className="bg-midnight-blue/50 backdrop-blur-sm p-6 rounded-xl border border-accent/10">
-              <div className="flex items-center mb-4">
-                <Target className="text-accent mr-3" size={24} />
-                <h3 className="text-xl font-semibold">Career Goals</h3>
-              </div>
-              <p className="text-gray-300">
-                Aspiring DevOps Engineer and Cloud Architect. Currently learning Terraform, Jenkins, 
-                Ansible, AWS, and Azure to build automated, scalable infrastructure solutions.
-              </p>
-            </div>
+        {/* Technical Focus */}
+        <div className="flex justify-center">
+          {/* Technical Focus card */}
+          <div className="reveal reveal-delay-4 relative w-full max-w-2xl">
+            <div className="absolute -inset-1 bg-gradient-to-r from-violet-600/20 to-cyan-500/20 rounded-3xl blur-xl" />
+            <div className="relative bg-white dark:bg-[#0D0D28] border border-violet-200 dark:border-violet-700/40 rounded-2xl p-5 sm:p-7 shadow-xl shadow-violet-500/5">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">
+                {about.technicalFocus.title}
+              </h3>
 
-            <div className="bg-midnight-blue/50 backdrop-blur-sm p-6 rounded-xl border border-accent/10">
-              <div className="flex items-center mb-4">
-                <Languages className="text-accent mr-3" size={24} />
-                <h3 className="text-xl font-semibold">Languages</h3>
-              </div>
-              <div className="space-y-2 text-gray-300">
-                <div className="flex justify-between">
-                  <span>Spanish (Native)</span>
-                  <span className="text-accent">●●●●●</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>English (B1-B2, preparing for IELTS)</span>
-                  <span className="text-accent">●●●●○</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>German (A1)</span>
-                  <span className="text-accent">●○○○○</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-accent to-accent-light rounded-xl blur-xl opacity-20"></div>
-              <div className="relative bg-midnight-blue/80 backdrop-blur-sm p-8 rounded-xl border border-accent/20">
-                <h3 className="text-2xl font-bold mb-6 text-accent">Technical Focus</h3>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-accent-light mb-2">Backend Development</h4>
-                    <p className="text-gray-300 text-sm">
-                      Strong expertise in SpringBoot, NestJS, Next.js with TypeScript, Java, Kotlin, 
-                      Python. Database management with MySQL, PostgreSQL, and MongoDB.
-                    </p>
+              <div className="space-y-5">
+                {about.technicalFocus.items.map((item, i) => (
+                  <div key={item.title} className="flex gap-4">
+                    <div
+                      className={`flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br ${focusIcons[i].gradient} flex items-center justify-center text-white shadow-md`}
+                    >
+                      {focusIcons[i].icon}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
+                        {item.title}
+                      </h4>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-accent-light mb-2">DevOps & Cloud</h4>
-                    <p className="text-gray-300 text-sm">
-                      Learning infrastructure as code with Terraform, CI/CD with Jenkins, 
-                      configuration management with Ansible, and cloud platforms AWS & Azure.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-accent-light mb-2">Additional Skills</h4>
-                    <p className="text-gray-300 text-sm">
-                      Git/GitHub workflows, Agile methodologies (SCRUM, Kanban), 
-                      networking protocols, and telecommunications fundamentals.
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
