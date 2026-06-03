@@ -97,7 +97,7 @@ const Skills: React.FC = () => {
   }));
 
   return (
-    <section id="skills" className="py-16 md:py-24 px-6 bg-slate-50 dark:bg-[#04040F]">
+    <section id="skills" className="py-16 md:py-24 px-6 bg-slate-50 dark:bg-[#04040F] overflow-hidden">
       <div ref={sectionRef} className="container mx-auto max-w-6xl">
         {/* Header */}
         <div className="text-center mb-16">

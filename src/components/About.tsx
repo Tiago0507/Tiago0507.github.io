@@ -15,7 +15,7 @@ const About: React.FC = () => {
   const { about } = t;
 
   return (
-    <section id="about" className="py-16 md:py-24 px-6 bg-white dark:bg-[#080818]">
+    <section id="about" className="py-16 md:py-24 px-6 bg-white dark:bg-[#080818] overflow-hidden">
       <div ref={sectionRef} className="container mx-auto max-w-6xl">
         {/* Section header */}
         <div className="text-center mb-16">
