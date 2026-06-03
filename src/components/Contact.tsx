@@ -62,7 +62,7 @@ const Contact: React.FC = () => {
   ];
 
   return (
-    <section id="contact" className="py-16 md:py-24 px-6 bg-slate-50 dark:bg-[#04040F]">
+    <section id="contact" className="py-16 md:py-24 px-6 bg-slate-50 dark:bg-[#04040F] overflow-hidden">
       <div ref={sectionRef} className="container mx-auto max-w-5xl">
         {/* Header */}
         <div className="text-center mb-16">
@@ -100,7 +100,7 @@ const Contact: React.FC = () => {
                       href={href}
                       target={external ? '_blank' : undefined}
                       rel={external ? 'noopener noreferrer' : undefined}
-                      className="group flex items-center gap-4 p-4 bg-slate-50 dark:bg-[#080818] border border-slate-200 dark:border-violet-900/20 rounded-xl hover:border-violet-300 dark:hover:border-violet-500/40 hover:shadow-md hover:shadow-violet-500/10 card-hover"
+                      className="group flex items-center gap-4 p-4 bg-slate-50 dark:bg-[#080818] border border-slate-200 dark:border-violet-900/20 rounded-xl hover:border-violet-300 dark:hover:border-violet-500/40 hover:shadow-md hover:shadow-violet-500/10 card-hover overflow-hidden"
                     >
                       <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-md`}>
                         {icon}

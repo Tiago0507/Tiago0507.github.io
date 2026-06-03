@@ -75,12 +75,12 @@ const projects: Project[] = [
 ];
 
 const categoryColors: Record<string, string> = {
-  'Full Stack': 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300',
-  Backend: 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300',
-  Frontend: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300',
-  Mobile: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300',
-  Cloud: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',
-  DevOps: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
+  'Full Stack': 'bg-violet-100/95 dark:bg-violet-900/90 backdrop-blur-sm text-violet-700 dark:text-violet-200',
+  Backend: 'bg-violet-100/95 dark:bg-violet-900/90 backdrop-blur-sm text-violet-700 dark:text-violet-200',
+  Frontend: 'bg-cyan-100/95 dark:bg-cyan-900/90 backdrop-blur-sm text-cyan-700 dark:text-cyan-200',
+  Mobile: 'bg-emerald-100/95 dark:bg-emerald-900/90 backdrop-blur-sm text-emerald-700 dark:text-emerald-200',
+  Cloud: 'bg-amber-100/95 dark:bg-amber-900/90 backdrop-blur-sm text-amber-700 dark:text-amber-200',
+  DevOps: 'bg-blue-100/95 dark:bg-blue-900/90 backdrop-blur-sm text-blue-700 dark:text-blue-200',
 };
 
 const ProjectCard: React.FC<{ project: Project; index: number; expandedId: string | null; onToggle: (id: string) => void; pt: Translations['projects'] }> = ({
