@@ -4,6 +4,11 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   darkMode: 'class',
+  // Only apply hover: / group-hover: styles on devices that actually support
+  // hover, so touch taps don't leave effects "stuck on" on mobile.
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       animation: {

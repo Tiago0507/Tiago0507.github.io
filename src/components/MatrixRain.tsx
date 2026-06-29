@@ -26,12 +26,19 @@ const MatrixRain: React.FC<{ className?: string; style?: React.CSSProperties }> 
     const fontSize = 14;
     let columns = 0;
     let drops: number[] = [];
+    let cssW = 0;
+    let cssH = 0;
 
     const setup = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      columns = Math.floor(canvas.width / fontSize);
-      drops = Array.from({ length: columns }, () => Math.random() * -canvas.height / fontSize);
+      cssW = canvas.offsetWidth;
+      cssH = canvas.offsetHeight;
+      // Crisp on high-density screens: backing store at DPR, draw in CSS pixels
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      columns = Math.floor(cssW / fontSize);
+      drops = Array.from({ length: columns }, () => Math.random() * -cssH / fontSize);
     };
 
     const ro = new ResizeObserver(setup);
@@ -48,7 +55,7 @@ const MatrixRain: React.FC<{ className?: string; style?: React.CSSProperties }> 
       if (frame % 3 === 0) {
         // Fade previous frame (matches the near-black hero bg) to leave trails
         ctx.fillStyle = 'rgba(4, 4, 15, 0.10)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, cssW, cssH);
         ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
 
         for (let i = 0; i < columns; i++) {
@@ -61,7 +68,7 @@ const MatrixRain: React.FC<{ className?: string; style?: React.CSSProperties }> 
           ctx.fillStyle = 'rgba(139, 92, 246, 0.45)';
           ctx.fillText(chars[Math.floor(Math.random() * chars.length)], x, y - fontSize);
 
-          if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          if (y > cssH && Math.random() > 0.975) drops[i] = 0;
           drops[i]++;
         }
       }

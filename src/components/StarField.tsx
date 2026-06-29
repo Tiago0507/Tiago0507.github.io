@@ -29,10 +29,20 @@ const StarField: React.FC = () => {
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Logical (CSS-pixel) size used for all drawing math
+    let cssW = 0;
+    let cssH = 0;
+
     const setup = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      const area = canvas.width * canvas.height;
+      cssW = canvas.offsetWidth;
+      cssH = canvas.offsetHeight;
+      // Render the backing store at the device pixel ratio so it stays crisp
+      // on high-density (mobile/retina) screens, then draw in CSS pixels.
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const area = cssW * cssH;
 
       // Stars (night) — depth layers for parallax
       starsRef.current = Array.from({ length: 320 }, () => {
@@ -49,8 +59,8 @@ const StarField: React.FC = () => {
       // Day constellation particles
       const pCount = Math.min(95, Math.round(area / 17000));
       particlesRef.current = Array.from({ length: pCount }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * cssW,
+        y: Math.random() * cssH,
         vx: (Math.random() - 0.5) * 0.35,
         vy: (Math.random() - 0.5) * 0.35,
         r: 1.3 + Math.random() * 2.4,
@@ -61,8 +71,8 @@ const StarField: React.FC = () => {
       // Soft bokeh motes (both modes, for depth)
       const mCount = Math.min(7, Math.round(area / 220000));
       motesRef.current = Array.from({ length: Math.max(4, mCount) }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * cssW,
+        y: Math.random() * cssH,
         vx: (Math.random() - 0.5) * 0.18,
         vy: -(0.05 + Math.random() * 0.18),
         r: 60 + Math.random() * 90,
@@ -97,7 +107,7 @@ const StarField: React.FC = () => {
       const speed = 3.2 + Math.random() * 1.6;
       rocketRef.current = {
         x: -40,
-        y: canvas.height * (0.55 + Math.random() * 0.4),
+        y: cssH * (0.55 + Math.random() * 0.4),
         vx: speed,
         vy: -speed * (0.55 + Math.random() * 0.25),
         trail: [],
@@ -297,7 +307,7 @@ const StarField: React.FC = () => {
         drawAirplane(r.x, r.y, angle);
       }
 
-      if (r.x > canvas.width + 60 || r.y < -60) {
+      if (r.x > cssW + 60 || r.y < -60) {
         rocketRef.current = null;
         nextRocketRef.current = Date.now() + 6000 + Math.random() * 7000;
       }
@@ -308,9 +318,9 @@ const StarField: React.FC = () => {
         m.phase += 0.01;
         m.x += m.vx;
         m.y += m.vy;
-        if (m.y < -m.r) { m.y = canvas.height + m.r; m.x = Math.random() * canvas.width; }
-        if (m.x < -m.r) m.x = canvas.width + m.r;
-        if (m.x > canvas.width + m.r) m.x = -m.r;
+        if (m.y < -m.r) { m.y = cssH + m.r; m.x = Math.random() * cssW; }
+        if (m.x < -m.r) m.x = cssW + m.r;
+        if (m.x > cssW + m.r) m.x = -m.r;
         const pulse = 0.5 + Math.sin(m.phase) * 0.5;
         const g = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r);
         if (isDark) {
@@ -329,11 +339,11 @@ const StarField: React.FC = () => {
 
     // Reduced motion: one static frame
     if (prefersReduced) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, cssW, cssH);
       if (isDark) {
         starsRef.current.forEach(s => {
           ctx.beginPath();
-          ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+          ctx.arc(s.x * cssW, s.y * cssH, s.r, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(215, 200, 255, 0.6)';
           ctx.fill();
         });
@@ -358,7 +368,7 @@ const StarField: React.FC = () => {
     let active = false;
 
     const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, cssW, cssH);
       const now = Date.now();
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
@@ -367,15 +377,15 @@ const StarField: React.FC = () => {
 
       if (isDark) {
         // ---- NIGHT ----
-        const px = (mx / canvas.width - 0.5);
-        const py = (my / canvas.height - 0.5);
+        const px = (mx / cssW - 0.5);
+        const py = (my / cssH - 0.5);
         starsRef.current.forEach(s => {
           s.phase += s.speed;
           const alpha = 0.1 + (Math.sin(s.phase) * 0.5 + 0.5) * 0.78;
           const ox = isFinite(px) ? px * s.depth * 22 : 0;
           const oy = isFinite(py) ? py * s.depth * 22 : 0;
           ctx.beginPath();
-          ctx.arc(s.x * canvas.width + ox, s.y * canvas.height + oy, s.r, 0, Math.PI * 2);
+          ctx.arc(s.x * cssW + ox, s.y * cssH + oy, s.r, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(215, 200, 255, ${alpha})`;
           ctx.fill();
         });
@@ -385,8 +395,8 @@ const StarField: React.FC = () => {
           const angle = (15 + Math.random() * 28) * (Math.PI / 180);
           const speed = 5 + Math.random() * 6;
           shootersRef.current.push({
-            x: Math.random() * canvas.width * 0.8,
-            y: Math.random() * canvas.height * 0.4,
+            x: Math.random() * cssW * 0.8,
+            y: Math.random() * cssH * 0.4,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
             tailLen: 70 + Math.random() * 90,
@@ -413,7 +423,7 @@ const StarField: React.FC = () => {
           ctx.moveTo(s.x - (s.vx / mag) * s.tailLen, s.y - (s.vy / mag) * s.tailLen);
           ctx.lineTo(s.x, s.y);
           ctx.stroke();
-          return s.life < s.maxLife && s.x < canvas.width + 60 && s.y < canvas.height + 60;
+          return s.life < s.maxLife && s.x < cssW + 60 && s.y < cssH + 60;
         });
       } else {
         // ---- DAY: interactive constellation network ----
@@ -435,10 +445,10 @@ const StarField: React.FC = () => {
           // keep a gentle minimum drift
           if (Math.abs(p.vx) < 0.05) p.vx += (Math.random() - 0.5) * 0.05;
           if (Math.abs(p.vy) < 0.05) p.vy += (Math.random() - 0.5) * 0.05;
-          if (p.x < 0) p.x = canvas.width;
-          if (p.x > canvas.width) p.x = 0;
-          if (p.y < 0) p.y = canvas.height;
-          if (p.y > canvas.height) p.y = 0;
+          if (p.x < 0) p.x = cssW;
+          if (p.x > cssW) p.x = 0;
+          if (p.y < 0) p.y = cssH;
+          if (p.y > cssH) p.y = 0;
         });
 
         // Links between nearby particles
