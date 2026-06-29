@@ -51,7 +51,7 @@ const translations = {
       badge: "Technical Skills",
       title: "My tech stack",
       subtitle:
-        "Technologies, tools, and professional skills across backend, frontend, cloud, and engineering",
+        "Technologies, tools, and professional skills I've worked with across software development, cloud, and engineering",
       tabs: {
         languages: { name: "Languages", label: "Lang" },
         backend: { name: "Backend", label: "Core" },
@@ -219,7 +219,7 @@ const translations = {
       badge: "Habilidades Técnicas",
       title: "Mi stack tecnológico",
       subtitle:
-        "Tecnologías, herramientas y habilidades profesionales en backend, frontend, cloud e ingeniería",
+        "Tecnologías, herramientas y habilidades profesionales que he usado en desarrollo de software, cloud e ingeniería",
       tabs: {
         languages: { name: "Lenguajes", label: "Lang" },
         backend: { name: "Backend", label: "Core" },
