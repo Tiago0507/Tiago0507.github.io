@@ -78,7 +78,20 @@ const StarField: React.FC = () => {
       const rect = canvas.getBoundingClientRect();
       mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     };
+    // Touch support so the particles react to a finger on mobile, like the mouse on desktop
+    const onTouch = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+    };
+    const onTouchEnd = () => {
+      mouseRef.current = { x: -9999, y: -9999 };
+    };
     window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('touchmove', onTouch, { passive: true });
+    window.addEventListener('touchstart', onTouch, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
 
     const spawnRocket = () => {
       const speed = 3.2 + Math.random() * 1.6;
@@ -334,6 +347,9 @@ const StarField: React.FC = () => {
       }
       return () => {
         window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('touchmove', onTouch);
+        window.removeEventListener('touchstart', onTouch);
+        window.removeEventListener('touchend', onTouchEnd);
         ro.disconnect();
       };
     }
@@ -509,6 +525,9 @@ const StarField: React.FC = () => {
       ro.disconnect();
       document.removeEventListener('visibilitychange', sync);
       window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('touchmove', onTouch);
+      window.removeEventListener('touchstart', onTouch);
+      window.removeEventListener('touchend', onTouchEnd);
     };
   }, [isDark]);
 

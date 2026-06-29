@@ -170,14 +170,6 @@ const Hero: React.FC = () => {
           <span aria-hidden="true" className="animate-blink text-violet-500 dark:text-violet-400 font-bold text-xl">|</span>
         </div>
 
-        {/* Bio */}
-        <p
-          className="text-base md:text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in"
-          style={{ animationDelay: '0.3s' }}
-        >
-          {t.hero.bio}
-        </p>
-
         {/* CTA Buttons */}
         <div
           className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center mb-12 animate-fade-in"

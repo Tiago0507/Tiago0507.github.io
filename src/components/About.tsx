@@ -27,6 +27,11 @@ const About: React.FC = () => {
           <div className="reveal reveal-delay-2 w-16 h-1 bg-gradient-to-r from-violet-600 to-cyan-500 mx-auto rounded-full" />
         </div>
 
+        {/* Lead statement */}
+        <p className="reveal reveal-delay-1 max-w-3xl mx-auto mb-10 text-center text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100 leading-snug">
+          {about.lead}
+        </p>
+
         {/* Bio narrative */}
         <div className="reveal reveal-delay-2 max-w-3xl mx-auto mb-16 space-y-5">
           {about.bio.map((paragraph, i) => (

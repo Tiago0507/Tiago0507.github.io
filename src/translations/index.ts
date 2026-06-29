@@ -14,12 +14,12 @@ const translations = {
         "Cloud & DevOps Engineer",
         "Full Stack Developer",
       ],
-      bio: "Engineer with concurrent degrees in Software Systems Engineering and Telematics Engineering at Universidad Icesi, passionate about building scalable software systems, cloud infrastructure, and DevOps automation.",
       viewWork: "View My Work",
       getInTouch: "Get in Touch",
     },
     about: {
       badge: "About Me",
+      lead: "Engineer passionate about building scalable software systems, cloud infrastructure, and DevOps automation.",
       bio: [
         `I'm an engineer pursuing concurrent degrees in Software Systems Engineering and Telematics Engineering at Universidad Icesi in Cali, Colombia, specializing in software development and cloud infrastructure.`,
         `I design and build production-ready, scalable, and maintainable systems, from APIs and microservices to cloud-native deployments. I've contributed to projects across sectors such as healthcare, e-commerce, and human-talent management, always focused on solving real problems, not just making something work in a demo.`,
@@ -182,12 +182,12 @@ const translations = {
         "Ingeniero Cloud & DevOps",
         "Desarrollador Full Stack",
       ],
-      bio: "Ingeniero con simultaneidad de carreras en Ingeniería de Sistemas e Ingeniería Telemática en la Universidad Icesi, apasionado por construir sistemas de software escalables, infraestructura en la nube y automatización DevOps.",
       viewWork: "Ver mi trabajo",
       getInTouch: "Contáctame",
     },
     about: {
       badge: "Sobre mí",
+      lead: "Ingeniero apasionado por construir sistemas de software escalables, infraestructura en la nube y automatización DevOps.",
       bio: [
         `Soy Ingeniero con simultaneidad de carreras en Ingeniería de Sistemas e Ingeniería Telemática en la Universidad Icesi, Cali, Colombia, con especialización en desarrollo de software e infraestructura en la nube.`,
         `Diseño y construyo sistemas listos para producción, escalables y mantenibles, desde APIs y microservicios hasta despliegues cloud-native. He participado en proyectos en sectores como salud, comercio electrónico y gestión de talento humano, siempre con foco en resolver problemas concretos, no solo en hacer que algo funcione en una demo.`,
