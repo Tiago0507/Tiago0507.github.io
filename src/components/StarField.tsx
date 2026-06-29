@@ -32,6 +32,7 @@ const StarField: React.FC = () => {
     // Logical (CSS-pixel) size used for all drawing math
     let cssW = 0;
     let cssH = 0;
+    let generated = false;
 
     const setup = () => {
       cssW = canvas.offsetWidth;
@@ -39,9 +40,18 @@ const StarField: React.FC = () => {
       // Render the backing store at the device pixel ratio so it stays crisp
       // on high-density (mobile/retina) screens, then draw in CSS pixels.
       const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-      canvas.width = Math.round(cssW * dpr);
-      canvas.height = Math.round(cssH * dpr);
+      const bw = Math.round(cssW * dpr);
+      const bh = Math.round(cssH * dpr);
+      if (canvas.width !== bw) canvas.width = bw;
+      if (canvas.height !== bh) canvas.height = bh;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Build the field only once. On later resizes we just re-size the canvas;
+      // stars use normalised coords (so they adapt to any size) and particles
+      // wrap around. This stops the field from reshuffling/vanishing when the
+      // mobile URL bar shows/hides during scroll (which fires resize events).
+      if (generated) return;
+      generated = true;
       const area = cssW * cssH;
 
       // Stars (night) — depth layers for parallax

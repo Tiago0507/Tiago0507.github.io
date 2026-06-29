@@ -130,9 +130,9 @@ const Header: React.FC = () => {
             aria-label="Santiago Valencia García — back to top"
             className="group flex items-center gap-2.5 flex-shrink-0"
           >
-            <span className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-violet-500/30 group-hover:shadow-violet-500/50 group-hover:scale-105 group-hover:-rotate-3 transition-all duration-300">
+            <span className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-violet-500/30 group-hover:shadow-violet-500/50 group-hover:scale-105 group-hover:-rotate-3 group-active:scale-105 group-active:-rotate-3 transition-all duration-300">
               SV
-              <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet-400 to-cyan-300 opacity-0 group-hover:opacity-100 blur-md -z-10 transition-opacity duration-300" />
+              <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet-400 to-cyan-300 opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-md -z-10 transition-opacity duration-300" />
             </span>
             <span className="hidden lg:block font-bold text-base text-slate-800 dark:text-slate-100">
               Santiago Valencia<span className="text-violet-500 dark:text-violet-400">.</span>
