@@ -69,7 +69,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
       {/* Matrix code-rain — decorative accent in the empty side gutters only
           (wide screens, dark mode), fading toward the centered content so it
           never sits over the text. */}
