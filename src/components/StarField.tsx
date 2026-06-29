@@ -29,7 +29,7 @@ const StarField: React.FC = () => {
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Logical (CSS-pixel) size used for all drawing math
+    // Size in CSS pixels, used as the drawing coordinates.
     let cssW = 0;
     let cssH = 0;
     let generated = false;
@@ -37,8 +37,7 @@ const StarField: React.FC = () => {
     const setup = () => {
       cssW = canvas.offsetWidth;
       cssH = canvas.offsetHeight;
-      // Render the backing store at the device pixel ratio so it stays crisp
-      // on high-density (mobile/retina) screens, then draw in CSS pixels.
+      // Scale to the screen's pixel ratio so it looks sharp on mobile.
       const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
       const bw = Math.round(cssW * dpr);
       const bh = Math.round(cssH * dpr);
@@ -46,15 +45,12 @@ const StarField: React.FC = () => {
       if (canvas.height !== bh) canvas.height = bh;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Build the field only once. On later resizes we just re-size the canvas;
-      // stars use normalised coords (so they adapt to any size) and particles
-      // wrap around. This stops the field from reshuffling/vanishing when the
-      // mobile URL bar shows/hides during scroll (which fires resize events).
+      // Build the field only once so it stays stable while scrolling on mobile.
       if (generated) return;
       generated = true;
       const area = cssW * cssH;
 
-      // Stars (night) — depth layers for parallax
+      // Stars for the dark theme.
       starsRef.current = Array.from({ length: 320 }, () => {
         const depth = Math.random();
         return {
@@ -66,7 +62,7 @@ const StarField: React.FC = () => {
         };
       });
 
-      // Day constellation particles
+      // Particles for the light theme.
       const pCount = Math.min(95, Math.round(area / 17000));
       particlesRef.current = Array.from({ length: pCount }, () => ({
         x: Math.random() * cssW,
@@ -78,7 +74,7 @@ const StarField: React.FC = () => {
         alpha: 0.35 + Math.random() * 0.4,
       }));
 
-      // Soft bokeh motes (both modes, for depth)
+      // Soft glowing dots that add depth in both themes.
       const mCount = Math.min(7, Math.round(area / 220000));
       motesRef.current = Array.from({ length: Math.max(4, mCount) }, () => ({
         x: Math.random() * cssW,
@@ -98,7 +94,7 @@ const StarField: React.FC = () => {
       const rect = canvas.getBoundingClientRect();
       mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     };
-    // Touch support so the particles react to a finger on mobile, like the mouse on desktop
+    // Track touch so the particles also react to a finger on mobile.
     const onTouch = (e: TouchEvent) => {
       const touch = e.touches[0];
       if (!touch) return;
@@ -124,13 +120,13 @@ const StarField: React.FC = () => {
       };
     };
 
-    // Premium hand-drawn rocket (night)
+    // Rocket shown in the dark theme.
     const drawRocketVector = (x: number, y: number, angle: number) => {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(angle);
 
-      // Flickering flame behind the rocket
+      // Flickering flame behind the body.
       const fl = 11 + Math.random() * 7;
       const flame = ctx.createLinearGradient(-16, 0, -16 - fl, 0);
       flame.addColorStop(0, 'rgba(255, 224, 130, 0.95)');
@@ -144,11 +140,10 @@ const StarField: React.FC = () => {
       ctx.closePath();
       ctx.fill();
 
-      // Soft glow on the body
       ctx.shadowColor = 'rgba(167, 139, 250, 0.85)';
       ctx.shadowBlur = 10;
 
-      // Fins (cyan)
+      // Fins
       ctx.fillStyle = '#06B6D4';
       ctx.beginPath(); ctx.moveTo(-15, -5); ctx.lineTo(-24, -12); ctx.lineTo(-11, -5); ctx.closePath(); ctx.fill();
       ctx.beginPath(); ctx.moveTo(-15, 5); ctx.lineTo(-24, 12); ctx.lineTo(-11, 5); ctx.closePath(); ctx.fill();
@@ -164,7 +159,7 @@ const StarField: React.FC = () => {
       ctx.closePath();
       ctx.fill();
 
-      // Nose cone (violet)
+      // Nose cone
       ctx.fillStyle = '#7C3AED';
       ctx.beginPath();
       ctx.moveTo(7, -6);
@@ -183,9 +178,7 @@ const StarField: React.FC = () => {
       ctx.restore();
     };
 
-    // Realistic commercial airliner seen from ABOVE (top-down) — central
-    // fuselage, two swept wings with engines, tail stabilisers and a coloured
-    // livery tail. Outline + shadow keep it visible on the light background.
+    // Commercial airplane (top-down view) shown in the light theme.
     const drawAirplane = (x: number, y: number, angle: number) => {
       ctx.save();
       ctx.translate(x, y);
@@ -211,7 +204,7 @@ const StarField: React.FC = () => {
       ctx.shadowBlur = 10;
       ctx.shadowOffsetY = 4;
 
-      // Wings (swept) — behind the fuselage
+      // Wings, drawn behind the fuselage.
       ctx.fillStyle = wing;
       ctx.strokeStyle = out;
       ctx.lineWidth = 1;
@@ -256,7 +249,7 @@ const StarField: React.FC = () => {
       ctx.lineTo(-24, 3.4); ctx.closePath();
       ctx.fill();
 
-      // Engines on the wings
+      // Engines
       ctx.fillStyle = '#475569';
       ctx.beginPath(); ctx.ellipse(-2, -14.5, 4.6, 2.0, -0.78, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.ellipse(-2, 14.5, 4.6, 2.0, 0.78, 0, Math.PI * 2); ctx.fill();
@@ -291,7 +284,7 @@ const StarField: React.FC = () => {
       const angle = Math.atan2(r.vy, r.vx);
 
       if (isDark) {
-        // Warm sparkle trail
+        // Warm sparkle trail behind the rocket.
         r.trail.forEach((d, i) => {
           const t = i / r.trail.length;
           const size = 0.6 + t * 5;
@@ -305,7 +298,7 @@ const StarField: React.FC = () => {
         });
         drawRocketVector(r.x, r.y, angle);
       } else {
-        // Subtle dotted contrail (no fire — fits the daytime paper plane)
+        // Soft dotted trail behind the airplane.
         r.trail.forEach((d, i) => {
           if (i % 2 !== 0) return;
           const t = i / r.trail.length;
@@ -347,7 +340,7 @@ const StarField: React.FC = () => {
       });
     };
 
-    // Reduced motion: one static frame
+    // Respect reduced-motion: draw a single static frame instead of animating.
     if (prefersReduced) {
       ctx.clearRect(0, 0, cssW, cssH);
       if (isDark) {
@@ -386,7 +379,7 @@ const StarField: React.FC = () => {
       drawMotes();
 
       if (isDark) {
-        // ---- NIGHT ----
+        // Dark theme: twinkling stars with a slight parallax.
         const px = (mx / cssW - 0.5);
         const py = (my / cssH - 0.5);
         starsRef.current.forEach(s => {
@@ -400,7 +393,7 @@ const StarField: React.FC = () => {
           ctx.fill();
         });
 
-        // Shooting stars — up to 2 at a time, frequent
+        // Shooting stars, up to two at a time.
         if (shootersRef.current.length < 2 && now >= nextShootRef.current) {
           const angle = (15 + Math.random() * 28) * (Math.PI / 180);
           const speed = 5 + Math.random() * 6;
@@ -436,7 +429,7 @@ const StarField: React.FC = () => {
           return s.life < s.maxLife && s.x < cssW + 60 && s.y < cssH + 60;
         });
       } else {
-        // ---- DAY: interactive constellation network ----
+        // Light theme: particles that connect to each other and to the pointer.
         const parts = particlesRef.current;
         parts.forEach(p => {
           const dx = p.x - mx;
@@ -452,7 +445,7 @@ const StarField: React.FC = () => {
           p.y += p.vy;
           p.vx *= 0.97;
           p.vy *= 0.97;
-          // keep a gentle minimum drift
+          // Keep a gentle minimum drift so they never fully stop.
           if (Math.abs(p.vx) < 0.05) p.vx += (Math.random() - 0.5) * 0.05;
           if (Math.abs(p.vy) < 0.05) p.vy += (Math.random() - 0.5) * 0.05;
           if (p.x < 0) p.x = cssW;
@@ -461,7 +454,7 @@ const StarField: React.FC = () => {
           if (p.y > cssH) p.y = 0;
         });
 
-        // Links between nearby particles
+        // Connect nearby particles with lines.
         for (let i = 0; i < parts.length; i++) {
           for (let j = i + 1; j < parts.length; j++) {
             const a = parts[i], b = parts[j];
@@ -479,7 +472,7 @@ const StarField: React.FC = () => {
           }
         }
 
-        // Links to cursor
+        // Connect particles near the pointer to it.
         if (isFinite(mx)) {
           parts.forEach(p => {
             const dx = p.x - mx, dy = p.y - my;
@@ -496,7 +489,7 @@ const StarField: React.FC = () => {
           });
         }
 
-        // Particle dots
+        // Draw the particles on top of the lines.
         parts.forEach(p => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -505,14 +498,14 @@ const StarField: React.FC = () => {
         });
       }
 
-      // ---- FLYER: rocket at night, paper plane by day ----
+      // Flyer: rocket in the dark theme, airplane in the light one.
       if (!rocketRef.current && now >= nextRocketRef.current) spawnRocket();
       if (rocketRef.current) drawFlyer();
 
       if (active) animRef.current = requestAnimationFrame(draw);
     };
 
-    // Only animate while the hero is on-screen and the tab is visible (perf/battery)
+    // Animate only while the hero is visible and the tab is active, to save battery.
     const start = () => {
       if (!active) {
         active = true;

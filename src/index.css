@@ -80,7 +80,7 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: shimmer 3s linear infinite;
-  /* Give descenders (g, y, p) room so background-clip:text doesn't cut them */
+  /* Give descenders room so the gradient text is not clipped */
   padding-bottom: 0.12em;
   line-height: 1.12;
 }
@@ -168,8 +168,8 @@ button, a {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* Custom cursor — hide native cursor only on precise-pointer devices.
-   Touch/coarse-pointer devices keep their default cursor (CustomCursor renders nothing there). */
+/* Hide the native cursor only on devices with a precise pointer.
+   Touch devices keep the default cursor. */
 @media (hover: hover) and (pointer: fine) {
   html.has-custom-cursor,
   html.has-custom-cursor * {

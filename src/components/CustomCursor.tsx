@@ -77,7 +77,7 @@ const CustomCursor: React.FC = () => {
 
   return (
     <>
-      {/* Dot — snaps instantly to cursor */}
+      {/* Dot that follows the cursor exactly */}
       <div
         ref={dotRef}
         className="fixed pointer-events-none -translate-x-1/2 -translate-y-1/2"
@@ -92,7 +92,7 @@ const CustomCursor: React.FC = () => {
           transition: 'width 0.2s ease, height 0.2s ease, opacity 0.4s ease',
         }}
       />
-      {/* Ring — follows with lag */}
+      {/* Ring that trails slightly behind */}
       <div
         ref={ringRef}
         className="fixed pointer-events-none -translate-x-1/2 -translate-y-1/2"

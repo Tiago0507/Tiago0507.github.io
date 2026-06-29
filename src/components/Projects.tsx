@@ -104,7 +104,7 @@ const ProjectCard: React.FC<{
       style={tiltStyle}
       className={`reveal reveal-delay-${Math.min(index + 2, 5)} group relative bg-slate-50 dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/20 rounded-2xl overflow-hidden hover:border-violet-300 dark:hover:border-violet-500/50 transition-colors duration-300`}
     >
-      {/* Full-card overlay button — opens the detail modal (accessible click target) */}
+      {/* Full-card button that opens the project details */}
       <button
         type="button"
         onClick={() => onOpen(project)}
@@ -149,7 +149,7 @@ const ProjectCard: React.FC<{
           )}
         </div>
 
-        {/* Hover action buttons (float above overlay) */}
+        {/* Quick links shown on hover */}
         <div className="absolute top-3 right-3 z-[2] flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
           {project.repos
             ? project.repos.map(repo => (
@@ -200,13 +200,13 @@ const ProjectCard: React.FC<{
           {description}
         </p>
 
-        {/* View details affordance */}
+        {/* View details hint */}
         <span className="inline-flex items-center gap-1 text-xs font-semibold text-violet-500 dark:text-violet-400 mb-4 group-hover:gap-2 transition-all duration-300">
           {pt.viewDetails}
           <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
         </span>
 
-        {/* Tech badges (preview — first few) */}
+        {/* First few technologies */}
         <div className="flex flex-wrap gap-2">
           {project.technologies.slice(0, 5).map(tech => (
             <span

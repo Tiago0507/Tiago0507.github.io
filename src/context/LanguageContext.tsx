@@ -15,7 +15,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [lang, setLang] = useState<Lang>('en');
   const [fading, setFading] = useState(false);
 
-  // Fade the content out, swap the text, then fade back in — a smooth crossfade.
+  // Fade the content out, swap the text, then fade back in for a smooth transition.
   const toggleLang = () => {
     setFading(true);
     window.setTimeout(() => {

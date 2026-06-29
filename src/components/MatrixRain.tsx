@@ -2,9 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
 /**
- * Subtle "matrix" code-rain — columns of letters/numbers that fall and morph.
- * Dark-mode only. Rendered as a decorative accent in empty side gutters (never
- * behind the readable content), so callers pass positioning via className/style.
+ * Decorative "matrix" code-rain for the dark theme. The caller positions it
+ * (via className/style) in the empty side areas so it never sits behind text.
  */
 const MatrixRain: React.FC<{ className?: string; style?: React.CSSProperties }> = ({
   className = '',
@@ -32,7 +31,7 @@ const MatrixRain: React.FC<{ className?: string; style?: React.CSSProperties }> 
     const setup = () => {
       cssW = canvas.offsetWidth;
       cssH = canvas.offsetHeight;
-      // Crisp on high-density screens: backing store at DPR, draw in CSS pixels
+      // Scale to the screen's pixel ratio so the glyphs stay sharp.
       const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
       canvas.width = Math.round(cssW * dpr);
       canvas.height = Math.round(cssH * dpr);
@@ -51,9 +50,9 @@ const MatrixRain: React.FC<{ className?: string; style?: React.CSSProperties }> 
 
     const draw = () => {
       frame++;
-      // Throttle to ~20fps for a calmer, more elegant cadence
+      // Update every third frame for a calmer pace.
       if (frame % 3 === 0) {
-        // Fade previous frame (matches the near-black hero bg) to leave trails
+        // Fade the previous frame slightly to leave trailing glyphs.
         ctx.fillStyle = 'rgba(4, 4, 15, 0.10)';
         ctx.fillRect(0, 0, cssW, cssH);
         ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
@@ -62,7 +61,7 @@ const MatrixRain: React.FC<{ className?: string; style?: React.CSSProperties }> 
           const char = chars[Math.floor(Math.random() * chars.length)];
           const x = i * fontSize;
           const y = drops[i] * fontSize;
-          // Leading glyph brighter, trail fades to violet
+          // Brighter leading glyph, dimmer one just above it.
           ctx.fillStyle = 'rgba(196, 181, 253, 0.85)';
           ctx.fillText(char, x, y);
           ctx.fillStyle = 'rgba(139, 92, 246, 0.45)';
@@ -75,7 +74,7 @@ const MatrixRain: React.FC<{ className?: string; style?: React.CSSProperties }> 
       if (active) animRef.current = requestAnimationFrame(draw);
     };
 
-    // Pause when off-screen or the tab is hidden (perf/battery)
+    // Pause when off-screen or the tab is hidden, to save battery.
     const start = () => {
       if (!active) {
         active = true;

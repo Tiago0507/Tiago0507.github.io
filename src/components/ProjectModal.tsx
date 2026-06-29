@@ -21,13 +21,13 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, pt, categoryClass,
   const description = content?.description ?? project.description;
   const highlights = content?.highlights ?? [];
 
-  // Lock body scroll, manage focus, handle Esc + focus trap
+  // While the modal is open, lock page scroll, keep focus inside it, and close on Escape.
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
-    // Focus the close button once the panel is mounted
+    // Move focus to the close button once the panel is mounted.
     const focusTimer = window.setTimeout(() => closeBtnRef.current?.focus(), 60);
 
     const onKeyDown = (e: KeyboardEvent) => {

@@ -70,9 +70,8 @@ const Hero: React.FC = () => {
 
   return (
     <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
-      {/* Matrix code-rain — decorative accent in the empty side gutters only
-          (wide screens, dark mode), fading toward the centered content so it
-          never sits over the text. */}
+      {/* Code-rain accent in the empty side areas on wide dark screens, faded
+          toward the center so it never overlaps the text. */}
       <MatrixRain
         className="hidden xl:block absolute top-0 bottom-0 left-0 w-[12%]"
         style={{
@@ -92,15 +91,15 @@ const Hero: React.FC = () => {
         }}
       />
 
-      {/* Starfield (night) / interactive constellation (day) */}
+      {/* Stars in dark mode, connected particles in light mode */}
       <StarField />
 
-      {/* Light mode animated mesh gradient background */}
+      {/* Animated mesh gradient background (light mode) */}
       {!isDark && (
         <div className="absolute inset-0 hero-mesh-bg pointer-events-none" style={{ zIndex: 1 }} />
       )}
 
-      {/* Cursor spotlight — light mode */}
+      {/* Cursor spotlight (light mode) */}
       {!isDark && (
         <div
           className="absolute inset-0 pointer-events-none"
