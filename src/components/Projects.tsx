@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { ExternalLink, Github, ArrowUpRight, Clock, ChevronDown } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { ExternalLink, Github, ArrowUpRight, Clock } from 'lucide-react';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { useLanguage } from '../context/LanguageContext';
 import { useTilt } from '../hooks/useTilt';
 import type { Translations } from '../translations';
+import ProjectModal from './ProjectModal';
 
-interface Repo {
+export interface Repo {
   label: string;
   url: string;
 }
 
-interface Project {
+export interface Project {
   id: string;
   title: string;
   shortTitle: string;
@@ -83,10 +85,16 @@ const categoryColors: Record<string, string> = {
   DevOps: 'bg-blue-100/95 dark:bg-blue-900/90 backdrop-blur-sm text-blue-700 dark:text-blue-200',
 };
 
-const ProjectCard: React.FC<{ project: Project; index: number; expandedId: string | null; onToggle: (id: string) => void; pt: Translations['projects'] }> = ({
-  project, index, expandedId, onToggle, pt,
-}) => {
+const ProjectCard: React.FC<{
+  project: Project;
+  index: number;
+  onOpen: (project: Project) => void;
+  pt: Translations['projects'];
+}> = ({ project, index, onOpen, pt }) => {
   const { ref, tiltStyle, onMouseMove, onMouseLeave } = useTilt(6);
+  const title = pt.items[project.id]?.title ?? project.title;
+  const description = pt.items[project.id]?.description ?? project.description;
+  const categoryClass = categoryColors[project.category] ?? 'bg-slate-100 text-slate-600';
 
   return (
     <div
@@ -94,8 +102,16 @@ const ProjectCard: React.FC<{ project: Project; index: number; expandedId: strin
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       style={tiltStyle}
-      className={`reveal reveal-delay-${Math.min(index + 2, 5)} group bg-slate-50 dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/20 rounded-2xl overflow-hidden hover:border-violet-300 dark:hover:border-violet-500/50 transition-colors duration-300`}
+      className={`reveal reveal-delay-${Math.min(index + 2, 5)} group relative bg-slate-50 dark:bg-[#0D0D28] border border-slate-200 dark:border-violet-900/20 rounded-2xl overflow-hidden hover:border-violet-300 dark:hover:border-violet-500/50 transition-colors duration-300`}
     >
+      {/* Full-card overlay button — opens the detail modal (accessible click target) */}
+      <button
+        type="button"
+        onClick={() => onOpen(project)}
+        aria-label={`${pt.viewDetails}: ${title}`}
+        className="absolute inset-0 z-[1] rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#080818]"
+      />
+
       {/* Image or placeholder */}
       <div className="relative h-44 overflow-hidden bg-gradient-to-br from-violet-50 to-cyan-50 dark:from-violet-950/30 dark:to-cyan-950/30">
         {project.imageUrl ? (
@@ -121,8 +137,8 @@ const ProjectCard: React.FC<{ project: Project; index: number; expandedId: strin
         )}
 
         {/* Top badges */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-          <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${categoryColors[project.category] ?? 'bg-slate-100 text-slate-600'}`}>
+        <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+          <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${categoryClass}`}>
             {project.category}
           </span>
           {project.status === 'in-progress' && (
@@ -133,8 +149,8 @@ const ProjectCard: React.FC<{ project: Project; index: number; expandedId: strin
           )}
         </div>
 
-        {/* Hover action buttons */}
-        <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+        {/* Hover action buttons (float above overlay) */}
+        <div className="absolute top-3 right-3 z-[2] flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
           {project.repos
             ? project.repos.map(repo => (
                 <a
@@ -176,61 +192,35 @@ const ProjectCard: React.FC<{ project: Project; index: number; expandedId: strin
 
       {/* Content */}
       <div className="p-4 sm:p-6">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <h3 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-300 leading-snug">
-            {pt.items[project.id]?.title ?? project.title}
-          </h3>
-          {project.repos ? (
-            <div className="flex gap-1 flex-shrink-0">
-              {project.repos.map(repo => (
-                <a
-                  key={repo.label}
-                  href={repo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg border border-slate-200 dark:border-violet-900/30 transition-all duration-200"
-                >
-                  {repo.label}
-                  <ArrowUpRight size={11} />
-                </a>
-              ))}
-            </div>
-          ) : project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-shrink-0 p-1.5 text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-all duration-200"
-            >
-              <ArrowUpRight size={16} />
-            </a>
-          )}
-        </div>
+        <h3 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors duration-300 leading-snug mb-3">
+          {title}
+        </h3>
 
-        <p className={`text-base text-slate-500 dark:text-slate-400 leading-relaxed transition-all duration-300 ${expandedId === project.id ? 'mb-3' : 'mb-2 line-clamp-3'}`}>
-          {pt.items[project.id]?.description ?? project.description}
+        <p className="text-base text-slate-500 dark:text-slate-400 leading-relaxed mb-4 line-clamp-3">
+          {description}
         </p>
-        <button type="button"
-          onClick={() => onToggle(project.id)}
-          className="flex items-center gap-1 text-xs font-semibold text-violet-500 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 mb-4 transition-colors duration-200"
-        >
-          {expandedId === project.id ? pt.seeLess : pt.seeMore}
-          <ChevronDown
-            size={13}
-            className={`transition-transform duration-300 ${expandedId === project.id ? 'rotate-180' : ''}`}
-          />
-        </button>
 
-        {/* Tech badges */}
+        {/* View details affordance */}
+        <span className="inline-flex items-center gap-1 text-xs font-semibold text-violet-500 dark:text-violet-400 mb-4 group-hover:gap-2 transition-all duration-300">
+          {pt.viewDetails}
+          <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+        </span>
+
+        {/* Tech badges (preview — first few) */}
         <div className="flex flex-wrap gap-2">
-          {project.technologies.map(tech => (
+          {project.technologies.slice(0, 5).map(tech => (
             <span
               key={tech}
-              className="px-2.5 py-1 bg-white dark:bg-[#080818] border border-slate-200 dark:border-violet-900/30 text-slate-600 dark:text-slate-400 text-sm font-medium rounded-lg hover:border-violet-300 dark:hover:border-violet-600/50 hover:text-violet-600 dark:hover:text-violet-400 transition-all duration-200"
+              className="px-2.5 py-1 bg-white dark:bg-[#080818] border border-slate-200 dark:border-violet-900/30 text-slate-600 dark:text-slate-400 text-sm font-medium rounded-lg"
             >
               {tech}
             </span>
           ))}
+          {project.technologies.length > 5 && (
+            <span className="px-2.5 py-1 text-sm font-medium text-violet-500 dark:text-violet-400">
+              +{project.technologies.length - 5}
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -239,11 +229,9 @@ const ProjectCard: React.FC<{ project: Project; index: number; expandedId: strin
 
 const Projects: React.FC = () => {
   const sectionRef = useScrollAnimation();
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { t } = useLanguage();
   const { projects: pt } = t;
-
-  const handleToggle = (id: string) => setExpandedId(expandedId === id ? null : id);
 
   return (
     <section id="projects" className="py-16 md:py-24 px-6 bg-white dark:bg-[#080818]">
@@ -274,8 +262,7 @@ const Projects: React.FC = () => {
               key={project.id}
               project={project}
               index={index}
-              expandedId={expandedId}
-              onToggle={handleToggle}
+              onOpen={setSelectedProject}
               pt={pt}
             />
           ))}
@@ -301,6 +288,19 @@ const Projects: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Project detail modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal
+            key={selectedProject.id}
+            project={selectedProject}
+            pt={pt}
+            categoryClass={categoryColors[selectedProject.category] ?? 'bg-slate-100 text-slate-600'}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

@@ -19,6 +19,9 @@ const CustomCursor: React.FC = () => {
   useEffect(() => {
     if (isTouchOnly) return;
 
+    // Hide the native cursor (CSS scoped to fine-pointer devices)
+    document.documentElement.classList.add('has-custom-cursor');
+
     const onMove = (e: MouseEvent) => {
       pos.current = { x: e.clientX, y: e.clientY };
       if (!isVisible) setIsVisible(true);
@@ -59,6 +62,7 @@ const CustomCursor: React.FC = () => {
       document.removeEventListener('mouseover', onOver);
       document.removeEventListener('mouseout', onOut);
       cancelAnimationFrame(rafRef.current);
+      document.documentElement.classList.remove('has-custom-cursor');
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTouchOnly]);

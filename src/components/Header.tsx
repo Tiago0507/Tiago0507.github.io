@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
+import { motion } from 'framer-motion';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -64,6 +65,11 @@ const Header: React.FC = () => {
     setIsMenuOpen(false);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
+
   const handleThemeToggle = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
@@ -116,7 +122,23 @@ const Header: React.FC = () => {
       />
 
       <nav aria-label="Main navigation" className="container mx-auto px-4 sm:px-6 py-4">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-4">
+          {/* Brand / logo */}
+          <button
+            type="button"
+            onClick={scrollToTop}
+            aria-label="Santiago Valencia García — back to top"
+            className="group flex items-center gap-2.5 flex-shrink-0"
+          >
+            <span className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-violet-500/30 group-hover:shadow-violet-500/50 group-hover:scale-105 group-hover:-rotate-3 transition-all duration-300">
+              SV
+              <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet-400 to-cyan-300 opacity-0 group-hover:opacity-100 blur-md -z-10 transition-opacity duration-300" />
+            </span>
+            <span className="hidden lg:block font-bold text-base text-slate-800 dark:text-slate-100">
+              Santiago Valencia<span className="text-violet-500 dark:text-violet-400">.</span>
+            </span>
+          </button>
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex flex-1 justify-center items-center gap-1">
             {navItems.map(({ id, label }) => {
@@ -125,23 +147,27 @@ const Header: React.FC = () => {
                 <button type="button"
                   key={id}
                   onClick={() => scrollTo(id)}
-                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg group ${
+                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
                     isActive
-                      ? 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20'
+                      ? 'text-violet-600 dark:text-violet-400'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400'
                   }`}
                 >
+                  {isActive && (
+                    <motion.span
+                      layoutId="navActivePill"
+                      className="absolute inset-0 bg-violet-100 dark:bg-violet-900/30 rounded-lg -z-10"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
                   {label}
-                  <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-violet-600 to-cyan-500 rounded-full transition-all duration-300 ${
-                    isActive ? 'w-4' : 'w-0 group-hover:w-4'
-                  }`} />
                 </button>
               );
             })}
           </div>
 
           {/* Right controls */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             {/* Language toggle */}
             <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5">
               <button type="button"

@@ -3,6 +3,7 @@ import { ChevronDown, Github, Linkedin, Mail, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import StarField from './StarField';
+import MatrixRain from './MatrixRain';
 
 const Hero: React.FC = () => {
   const { t } = useLanguage();
@@ -69,7 +70,29 @@ const Hero: React.FC = () => {
 
   return (
     <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
-      {/* Starfield — dark mode */}
+      {/* Matrix code-rain — decorative accent in the empty side gutters only
+          (wide screens, dark mode), fading toward the centered content so it
+          never sits over the text. */}
+      <MatrixRain
+        className="hidden xl:block absolute top-0 bottom-0 left-0 w-[12%]"
+        style={{
+          zIndex: 2,
+          opacity: 0.55,
+          maskImage: 'linear-gradient(to right, #000 45%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to right, #000 45%, transparent 100%)',
+        }}
+      />
+      <MatrixRain
+        className="hidden xl:block absolute top-0 bottom-0 right-0 w-[12%]"
+        style={{
+          zIndex: 2,
+          opacity: 0.55,
+          maskImage: 'linear-gradient(to left, #000 45%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to left, #000 45%, transparent 100%)',
+        }}
+      />
+
+      {/* Starfield (night) / interactive constellation (day) */}
       <StarField />
 
       {/* Light mode animated mesh gradient background */}
@@ -126,11 +149,11 @@ const Hero: React.FC = () => {
       {/* Content */}
       <div className="relative text-center px-6 max-w-4xl mx-auto pt-20" style={{ zIndex: 10 }}>
         {/* Name */}
-        <h1 className="mb-5 leading-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <span className="block text-4xl md:text-6xl lg:text-7xl font-black gradient-text-animated">
+        <h1 className="mb-5 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <span className="block text-4xl md:text-6xl lg:text-7xl font-black gradient-text-animated pb-1">
             Santiago Valencia
           </span>
-          <span className="block text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-slate-100">
+          <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-[1.1] text-slate-900 dark:text-slate-100">
             García
           </span>
         </h1>
